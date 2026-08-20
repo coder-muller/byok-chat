@@ -7,7 +7,10 @@ import { useEnsureUser } from "@/lib/use-ensure-user"
 
 export function RootLayout() {
   const { pathname } = useLocation()
-  const hideHeader = pathname === "/sign-in" || pathname === "/sso-callback"
+  const hideHeader =
+    pathname === "/sign-in" ||
+    pathname === "/sso-callback" ||
+    pathname === "/api-key"
   const { error } = useEnsureUser()
 
   return (
