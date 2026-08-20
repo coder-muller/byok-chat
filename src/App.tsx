@@ -1,15 +1,15 @@
-import { Button } from "@/components/ui/button"
+import { MODELS } from "@/lib/models"
+import { Chat } from "@/components/chat"
+import { SiteHeader } from "@/components/site-header"
+import { ThemeProvider } from "@/components/theme-provider"
 
 export default function App() {
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center gap-6 p-6">
-      <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-medium tracking-tight">byok-chat</h1>
-        <p className="text-muted-foreground">
-          Vite + React + Tailwind + shadcn/ui (base-rhea)
-        </p>
+    <ThemeProvider>
+      <div className="flex h-svh flex-col">
+        <SiteHeader />
+        <Chat models={MODELS} />
       </div>
-      <Button>Get started</Button>
-    </div>
+    </ThemeProvider>
   )
 }
