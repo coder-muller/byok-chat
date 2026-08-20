@@ -13,9 +13,7 @@ export function SiteHeader() {
         Chat
       </Link>
       <div className="flex items-center gap-2">
-        {isLoaded && isSignedIn ? (
-          <UserButton />
-        ) : isLoaded ? (
+        {isLoaded && !isSignedIn ? (
           <Button
             variant="ghost"
             size="sm"
@@ -26,6 +24,7 @@ export function SiteHeader() {
           </Button>
         ) : null}
         <NewChatButton />
+        {isLoaded && isSignedIn ? <UserButton /> : null}
       </div>
     </header>
   )
