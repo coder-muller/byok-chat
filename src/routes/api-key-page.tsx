@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useAuth } from "@clerk/react"
-import { useMutation, useQuery } from "convex/react"
+import { useConvexAuth, useMutation, useQuery } from "convex/react"
 import { ArrowLeftIcon, EyeIcon, EyeOffIcon } from "lucide-react"
 import { Link, Navigate, useNavigate } from "react-router"
 
@@ -22,7 +22,11 @@ function saveKeyErrorMessage(caught: unknown) {
 
 export function ApiKeyPage() {
   const { isLoaded, isSignedIn } = useAuth()
-  const hasOpenRouterKey = useQuery(api.users.hasOpenRouterKey)
+  const { isAuthenticated } = useConvexAuth()
+  const hasOpenRouterKey = useQuery(
+    api.users.hasOpenRouterKey,
+    isAuthenticated ? {} : "skip",
+  )
   const saveOpenRouterKey = useMutation(api.users.saveOpenRouterKey)
   const navigate = useNavigate()
   const [key, setKey] = React.useState("")

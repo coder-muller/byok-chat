@@ -21,7 +21,10 @@ export function Chat({ models }: { models: GatewayModel[] }) {
   const messages: ChatUIMessage[] = []
   const { isLoaded, isSignedIn } = useAuth()
   const { isLoading: isConvexAuthLoading, isAuthenticated } = useConvexAuth()
-  const hasOpenRouterKey = useQuery(api.users.hasOpenRouterKey)
+  const hasOpenRouterKey = useQuery(
+    api.users.hasOpenRouterKey,
+    isAuthenticated ? {} : "skip",
+  )
   const navigate = useNavigate()
 
   const resolvedModel = models.some((m) => m.id === model)
