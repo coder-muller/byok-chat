@@ -1,4 +1,6 @@
 import * as React from "react"
+import { useAuth } from "@clerk/react"
+import { useNavigate } from "react-router"
 
 import { type GatewayModel } from "@/lib/models"
 import { type ChatUIMessage } from "@/lib/chat-types"
@@ -15,10 +17,19 @@ import {
 export function Chat({ models }: { models: GatewayModel[] }) {
   const [model, setModel] = React.useState(models[0]?.id ?? "")
   const messages: ChatUIMessage[] = []
+  const { isLoaded, isSignedIn } = useAuth()
+  const navigate = useNavigate()
 
   const resolvedModel = models.some((m) => m.id === model)
     ? model
     : (models[0]?.id ?? "")
+
+  function handleSend() {
+    if (!isLoaded) return
+    if (!isSignedIn) {
+      void navigate("/sign-in")
+    }
+  }
 
   return (
     <div className="mx-auto flex min-h-0 w-full flex-1 flex-col">
@@ -33,7 +44,7 @@ export function Chat({ models }: { models: GatewayModel[] }) {
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
-              <Suggestions onSelect={() => {}} />
+              <Suggestions onSelect={() => handleSend()} />
             </EmptyContent>
           </Empty>
         </div>
@@ -45,7 +56,7 @@ export function Chat({ models }: { models: GatewayModel[] }) {
           model={resolvedModel}
           onModelChange={setModel}
           isBusy={false}
-          onSubmit={() => {}}
+          onSubmit={() => handleSend()}
           onStop={() => {}}
         />
       </div>
