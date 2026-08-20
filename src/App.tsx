@@ -1,15 +1,7 @@
-import { MODELS } from "@/lib/models"
-import { Chat } from "@/components/chat"
-import { SiteHeader } from "@/components/site-header"
-import { ThemeProvider } from "@/components/theme-provider"
+import { RouterProvider } from "react-router/dom"
+
+import { router } from "@/router"
 
 export default function App() {
-  return (
-    <ThemeProvider>
-      <div className="flex h-svh flex-col">
-        <SiteHeader />
-        <Chat models={MODELS} />
-      </div>
-    </ThemeProvider>
-  )
+  return <RouterProvider router={router} />
 }
