@@ -19,6 +19,7 @@ export function useSignedInDestination() {
     hasOpenRouterKey !== undefined
 
   const to = isDestinationReady ? (hasOpenRouterKey ? "/" : "/api-key") : null
+  const isResolved = Boolean(isLoaded) && (isSignedIn !== true || isDestinationReady)
 
   return {
     isLoaded: Boolean(isLoaded),
@@ -26,6 +27,7 @@ export function useSignedInDestination() {
     isAuthenticated,
     hasOpenRouterKey,
     isDestinationReady,
+    isResolved,
     to,
   }
 }
