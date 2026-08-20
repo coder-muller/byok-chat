@@ -1,11 +1,48 @@
+import * as React from "react"
+import { useAuth, useSignIn } from "@clerk/react"
 import { ArrowLeftIcon } from "lucide-react"
-import { Link } from "react-router"
+import { Link, Navigate } from "react-router"
 import { siGithub } from "simple-icons"
 
 import { SignInPreview } from "@/components/sign-in-preview"
 import { Button } from "@/components/ui/button"
 
 export function SignInPage() {
+  const { isLoaded: isAuthLoaded, isSignedIn } = useAuth()
+  const { isLoaded: isSignInLoaded, signIn } = useSignIn()
+  const [error, setError] = React.useState<string | null>(null)
+  const [pending, setPending] = React.useState(false)
+
+  const isReady = isAuthLoaded && isSignInLoaded
+
+  async function handleGitHub() {
+    if (!signIn) return
+    setError(null)
+    setPending(true)
+    try {
+      await signIn.authenticateWithRedirect({
+        strategy: "oauth_github",
+        redirectUrl: "/sso-callback",
+        redirectUrlComplete: "/",
+      })
+    } catch (caught) {
+      setPending(false)
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : "GitHub sign-in failed. Try again.",
+      )
+    }
+  }
+
+  if (!isAuthLoaded) {
+    return <main className="min-h-0 flex-1" />
+  }
+
+  if (isSignedIn) {
+    return <Navigate to="/" replace />
+  }
+
   return (
     <main className="grid min-h-0 flex-1 lg:grid-cols-2">
       <section className="relative flex items-center justify-center px-6 py-8 sm:px-10 lg:px-16 lg:py-10">
@@ -30,17 +67,29 @@ export function SignInPage() {
             </p>
           </div>
 
-          <Button size="lg" className="w-full" type="button">
+          <Button
+            size="lg"
+            className="w-full"
+            type="button"
+            disabled={!isReady || pending}
+            onClick={() => void handleGitHub()}
+          >
             <svg data-icon="inline-start" viewBox="0 0 24 24" aria-hidden>
               <path fill="currentColor" d={siGithub.path} />
             </svg>
             Continue with GitHub
           </Button>
 
-          <p className="text-center text-xs leading-relaxed text-muted-foreground">
-            We request your public profile and email. Nothing is stored until a
-            session is created.
-          </p>
+          {error ? (
+            <p className="text-center text-xs leading-relaxed text-destructive">
+              {error}
+            </p>
+          ) : (
+            <p className="text-center text-xs leading-relaxed text-muted-foreground">
+              We request your public profile and email. Nothing is stored until
+              a session is created.
+            </p>
+          )}
         </div>
       </section>
 

@@ -5,7 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 
 export function RootLayout() {
   const { pathname } = useLocation()
-  const hideHeader = pathname === "/sign-in"
+  const hideHeader = pathname === "/sign-in" || pathname === "/sso-callback"
 
   return (
     <ThemeProvider>
