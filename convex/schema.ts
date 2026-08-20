@@ -8,5 +8,8 @@ export default defineSchema({
     name: v.string(),
     email: v.string(),
     imageUrl: v.string(),
+    openRouterKeyCiphertext: v.optional(v.string()),
+    openRouterKeyIv: v.optional(v.string()),
+    openRouterKeyVersion: v.optional(v.number()),
   }).index("by_token", ["tokenIdentifier"]),
 })
