@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router"
 
+import { ApiKeyPage } from "@/routes/api-key-page"
 import { ChatPage } from "@/routes/chat-page"
 import { NotFoundPage } from "@/routes/not-found-page"
 import { RootLayout } from "@/routes/root-layout"
@@ -14,6 +15,7 @@ export const router = createBrowserRouter([
     ErrorBoundary: RouteErrorPage,
     children: [
       { index: true, Component: ChatPage },
+      { path: "api-key", Component: ApiKeyPage },
       { path: "sign-in", Component: SignInPage },
       { path: "sso-callback", Component: SsoCallbackPage },
       { path: "*", Component: NotFoundPage },

@@ -1,4 +1,5 @@
 import { UserButton, useAuth } from "@clerk/react"
+import { KeyRoundIcon } from "lucide-react"
 import { Link } from "react-router"
 
 import { NewChatButton } from "@/components/new-chat-button"
@@ -24,6 +25,18 @@ export function SiteHeader() {
           </Button>
         ) : null}
         <NewChatButton />
+        {isLoaded && isSignedIn ? (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-10"
+            aria-label="API key"
+            render={<Link to="/api-key" />}
+            nativeButton={false}
+          >
+            <KeyRoundIcon />
+          </Button>
+        ) : null}
         {isLoaded && isSignedIn ? <UserButton /> : null}
       </div>
     </header>
