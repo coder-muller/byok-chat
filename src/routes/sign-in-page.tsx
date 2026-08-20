@@ -1,5 +1,6 @@
 import * as React from "react"
-import { useAuth, useSignIn } from "@clerk/react"
+import { useAuth } from "@clerk/react"
+import { useSignIn } from "@clerk/react/legacy"
 import { ArrowLeftIcon } from "lucide-react"
 import { Link, Navigate } from "react-router"
 import { siGithub } from "simple-icons"
