@@ -1,11 +1,9 @@
 import * as React from "react"
-import { useAuth } from "@clerk/react"
-import { useConvexAuth, useQuery } from "convex/react"
-import { useNavigate } from "react-router"
+import { Navigate, useNavigate } from "react-router"
 
-import { api } from "../../convex/_generated/api"
 import { type GatewayModel } from "@/lib/models"
 import { type ChatUIMessage } from "@/lib/chat-types"
+import { useSignedInDestination } from "@/lib/use-signed-in-destination"
 import { PromptForm } from "@/components/prompt-form"
 import { Suggestions } from "@/components/suggestions"
 import {
@@ -19,12 +17,8 @@ import {
 export function Chat({ models }: { models: GatewayModel[] }) {
   const [model, setModel] = React.useState(models[0]?.id ?? "")
   const messages: ChatUIMessage[] = []
-  const { isLoaded, isSignedIn } = useAuth()
-  const { isLoading: isConvexAuthLoading, isAuthenticated } = useConvexAuth()
-  const hasOpenRouterKey = useQuery(
-    api.users.hasOpenRouterKey,
-    isAuthenticated ? {} : "skip",
-  )
+  const { isLoaded, isSignedIn, isDestinationReady, to } =
+    useSignedInDestination()
   const navigate = useNavigate()
 
   const resolvedModel = models.some((m) => m.id === model)
@@ -32,15 +26,20 @@ export function Chat({ models }: { models: GatewayModel[] }) {
     : (models[0]?.id ?? "")
 
   function handleSend() {
-    if (!isLoaded || isConvexAuthLoading) return
+    if (!isLoaded) return
     if (!isSignedIn) {
       void navigate("/sign-in")
       return
     }
-    if (!isAuthenticated || hasOpenRouterKey === undefined) return
-    if (!hasOpenRouterKey) {
-      void navigate("/api-key")
-    }
+    if (!isDestinationReady || to === "/api-key") return
+  }
+
+  if (isSignedIn && to === "/api-key") {
+    return <Navigate to="/api-key" replace />
+  }
+
+  if (isSignedIn && !isDestinationReady) {
+    return <div className="mx-auto flex min-h-0 w-full flex-1 flex-col" />
   }
 
   return (

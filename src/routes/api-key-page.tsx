@@ -22,7 +22,7 @@ function saveKeyErrorMessage(caught: unknown) {
 
 export function ApiKeyPage() {
   const { isLoaded, isSignedIn } = useAuth()
-  const { isAuthenticated } = useConvexAuth()
+  const { isLoading: isConvexAuthLoading, isAuthenticated } = useConvexAuth()
   const hasOpenRouterKey = useQuery(
     api.users.hasOpenRouterKey,
     isAuthenticated ? {} : "skip",
@@ -41,6 +41,11 @@ export function ApiKeyPage() {
     const trimmed = key.trim()
     if (!trimmed.startsWith("sk-or-")) {
       setError("OpenRouter keys start with sk-or-.")
+      return
+    }
+
+    if (!isAuthenticated) {
+      setError("Still connecting your account. Try again in a moment.")
       return
     }
 
@@ -63,19 +68,29 @@ export function ApiKeyPage() {
     return <Navigate to="/sign-in" replace />
   }
 
+  if (
+    isConvexAuthLoading ||
+    !isAuthenticated ||
+    hasOpenRouterKey === undefined
+  ) {
+    return <main className="min-h-0 flex-1" />
+  }
+
   return (
     <main className="grid min-h-0 flex-1 overflow-y-auto lg:grid-cols-2 lg:overflow-hidden">
       <section className="relative flex items-center justify-center px-6 py-8 sm:px-10 lg:px-16 lg:py-10">
-        <Button
-          variant="ghost"
-          size="sm"
-          className="absolute top-8 left-6 sm:left-10 lg:top-10 lg:left-16"
-          render={<Link to="/" />}
-          nativeButton={false}
-        >
-          <ArrowLeftIcon data-icon="inline-start" />
-          Chat
-        </Button>
+        {replacing ? (
+          <Button
+            variant="ghost"
+            size="sm"
+            className="absolute top-8 left-6 sm:left-10 lg:top-10 lg:left-16"
+            render={<Link to="/" />}
+            nativeButton={false}
+          >
+            <ArrowLeftIcon data-icon="inline-start" />
+            Chat
+          </Button>
+        ) : null}
 
         <form
           onSubmit={(event) => void handleSubmit(event)}
@@ -133,7 +148,7 @@ export function ApiKeyPage() {
             size="lg"
             className="w-full"
             type="submit"
-            disabled={pending || key.trim() === ""}
+            disabled={pending || !isAuthenticated || key.trim() === ""}
           >
             {replacing ? "Replace key" : "Save key"}
           </Button>

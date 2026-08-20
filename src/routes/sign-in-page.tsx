@@ -7,9 +7,11 @@ import { siGithub } from "simple-icons"
 
 import { SignInPreview } from "@/components/sign-in-preview"
 import { Button } from "@/components/ui/button"
+import { useSignedInDestination } from "@/lib/use-signed-in-destination"
 
 export function SignInPage() {
   const { isLoaded: isAuthLoaded, isSignedIn } = useAuth()
+  const { isDestinationReady, to } = useSignedInDestination()
   const { isLoaded: isSignInLoaded, signIn } = useSignIn()
   const [error, setError] = React.useState<string | null>(null)
   const [pending, setPending] = React.useState(false)
@@ -41,7 +43,10 @@ export function SignInPage() {
   }
 
   if (isSignedIn) {
-    return <Navigate to="/" replace />
+    if (!isDestinationReady || to === null) {
+      return <main className="min-h-0 flex-1" />
+    }
+    return <Navigate to={to} replace />
   }
 
   return (
